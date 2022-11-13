@@ -19,6 +19,15 @@ instance = out.split(':')
 AWSinstanceID = instance[1]
 #print(AWSinstanceID)  
 
+#DynamoDB init
+tablename = "labels"
+pKey_name = 'id'
+pKey = 0
+columns = ["Label Types", "Label Names", "isDuplicate"]
+client = boto3.client('dynamodb')
+db = boto3.resource('dynamodb')
+table = db.Table(tablename)
+
 #DockerImage object that stores the information for docker images
 class DockerImage:
 	id = ''
@@ -129,6 +138,38 @@ def imageEvents():
 stdin, stdout, stderr = client.exec_command('docker container ls -a -q --no-trunc') #run command to get id of containers that already exist
 out = stdout.read().decode("utf8") #read the output of the command and convert it into string since it is in bit format
 dockerContainers = out.splitlines() #store the output in a list
+
+
+#Dynamo DB Upload
+
+def dbupload():
+    for i in Images:
+        pKey = i.imgID
+        response = table.putitem(
+			Item = 
+   			{
+				pKey_name:pKey,
+				columns[0]:	"labeltypetest",
+				columns[1]: "labelnametest",
+				columns[2]: "idDuplicatetest"    
+			}
+		)
+response["ResponseMetaData"]["HTTPStatusCode"]
+
+#DynamoDB Get
+
+def dbget():
+    response  = table.getitem(
+		Key={
+			pKey_name:pKey
+		}
+	)
+response["Item"]
+
+
+
+
+
 
 #uncomment the line below to see if all of the ids are in the list
 #print(ind) #print the list to see how the id's are stored
