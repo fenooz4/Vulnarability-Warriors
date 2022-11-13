@@ -29,6 +29,37 @@ client = boto3.client('dynamodb')
 db = boto3.resource('dynamodb')
 table = db.Table(tablename)
 
+#Dynamo DB create table
+def create_table():
+    table = client.create_table(
+		tablename = 'labels',
+  		KeySchema=[
+	  		{
+		  		'AttributeName' : 'instanceID',
+				'KeyType': 'HASH'
+	  		},
+     		{
+				'AttributeName' : 'imageID',
+				'KeyType' : 'RANGE'
+	 		},
+    	],
+		AttributeDefinitions = [
+			{
+				'AttributeName' : 'instanceID',
+				'AttributeType' : 'S'
+			},
+			{
+				'AttributeName' : 'imageID',
+				'AttributeType' : 'S'
+			},
+		],
+		ProvisionedThroughput = {
+			'ReadCapacityUnits' : 5,
+			'WriteCapacityUnits' : 5
+		}
+	)    
+    
+
 #DockerImage object that stores the information for docker images
 class DockerImage:
 	id = ''
@@ -141,38 +172,9 @@ out = stdout.read().decode("utf8") #read the output of the command and convert i
 dockerContainers = out.splitlines() #store the output in a list
 
 
-#Dynamo DB Upload
-def create_table():
-    table = client.create_table(
-		tablename = 'labels',
-  		KeySchema=[
-	  		{
-		  		'AttributeName' : 'instanceID',
-				'KeyType': 'HASH'
-	  		},
-     		{
-				'AttributeName' : 'imageID',
-				'KeyType' : 'RANGE'
-	 		},
-    	],
-		AttributeDefinitions = [
-			{
-				'AttributeName' : 'instanceID',
-				'AttributeType' : 'S'
-			},
-			{
-				'AttributeName' : 'imageID',
-				'AttributeType' : 'S'
-			},
-		],
-		ProvisionedThroughput = {
-			'ReadCapacityUnits' : 5,
-			'WriteCapacityUnits' : 5
-		}
-	)    
+
     
-    
-    
+# DynamoDB put function   
 def dbupload():
     for i in Images:
         pKey = AWSinstanceID
@@ -185,16 +187,6 @@ def dbupload():
 				columns[2]: "labelnametest"    
 			}
 		)
-
-#DynamoDB Get
-
-def dbget():
-    response  = table.getitem(
-		Key={
-			pKey_name:pKey
-		}
-	)
-
 
 
 
