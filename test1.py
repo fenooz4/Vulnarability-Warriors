@@ -175,18 +175,20 @@ dockerContainers = out.splitlines() #store the output in a list
 
     
 # DynamoDB put function   
-def dbupload():
+def dbupload(c):
     for i in Images:
         pKey = AWSinstanceID
-        response = table.putitem(
-			Item = 
-   			{
+        j = 0
+        while j < len(i.labelTypes):
+            response = table.putitem(
+			Item = {
 				pKey_name:pKey,
 				columns[0]:	i.imageID,
-				columns[1]: "labeltypetest",
-				columns[2]: "labelnametest"    
+				columns[1][j]: i.labelTypes[j],
+				columns[2][j]: i.labelNames[j],   
 			}
-		)
+			)
+        
 
 
 
