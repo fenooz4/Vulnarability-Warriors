@@ -2,6 +2,7 @@ import sys
 import os
 import time
 import boto3
+import awscli
 from paramiko import SSHClient, AutoAddPolicy
 
 
@@ -21,9 +22,9 @@ AWSinstanceID = instance[1]
 
 #DynamoDB init
 tablename = "labels"
-pKey_name = 'id'
+pKey_name = 'instanceID'
 pKey = 0
-columns = ["Label Types", "Label Names", "isDuplicate"]
+columns = ["imageID","Label Types", "Label Names", "isDuplicate"]
 client = boto3.client('dynamodb')
 db = boto3.resource('dynamodb')
 table = db.Table(tablename)
@@ -141,20 +142,49 @@ dockerContainers = out.splitlines() #store the output in a list
 
 
 #Dynamo DB Upload
-
+def create_table():
+    table = client.create_table(
+		tablename = 'labels',
+  		KeySchema=[
+	  		{
+		  		'AttributeName' : 'instanceID',
+				'KeyType': 'HASH'
+	  		},
+     		{
+				'AttributeName' : 'imageID',
+				'KeyType' : 'RANGE'
+	 		},
+    	],
+		AttributeDefinitions = [
+			{
+				'AttributeName' : 'instanceID',
+				'AttributeType' : 'S'
+			},
+			{
+				'AttributeName' : 'imageID',
+				'AttributeType' : 'S'
+			},
+		],
+		ProvisionedThroughput = {
+			'ReadCapacityUnits' : 5,
+			'WriteCapacityUnits' : 5
+		}
+	)    
+    
+    
+    
 def dbupload():
     for i in Images:
-        pKey = i.imgID
+        pKey = AWSinstanceID
         response = table.putitem(
 			Item = 
    			{
 				pKey_name:pKey,
-				columns[0]:	"labeltypetest",
-				columns[1]: "labelnametest",
-				columns[2]: "idDuplicatetest"    
+				columns[0]:	i.imageID,
+				columns[1]: "labeltypetest",
+				columns[2]: "labelnametest"    
 			}
 		)
-response["ResponseMetaData"]["HTTPStatusCode"]
 
 #DynamoDB Get
 
@@ -164,7 +194,6 @@ def dbget():
 			pKey_name:pKey
 		}
 	)
-response["Item"]
 
 
 
