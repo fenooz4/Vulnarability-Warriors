@@ -155,14 +155,14 @@ def imageEvents(std_outline):
 # start imageEvents and containerEvents and read lines and parse them accordingly
 def eventReader():
     processes = [subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, universal_newlines=True) for cmd in Commands]
-    for std_outline in iter(subprocess.PIPE.stdout.readline, ""):
-        if re.fullmatch(containerPat, std_outline):
+    for std_outline in iter(processes[0].stdout.readline, ""):
+        if re.match(containerPat, std_outline):
             print("container")
             containerEvents(std_outline)
         else:
             print("image")
             imageEvents(std_outline)
-
+    for p in processes: p.wait()
 
 
 # obtains a list of all running and previously ran docker container IDs and adds them to the dockerContainer list
