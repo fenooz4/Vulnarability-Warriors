@@ -133,35 +133,35 @@ def containerEvents(std_outline):
 
 # monitors image events (currently terminates program when images are removed from system for some reason)
 def imageEvents(std_outline):
-        # need to obtain the image name since the docker events command does not output the image ID on pull
-        dockerImg = std_outline
-        # print(dockerImg)
-        dockerImg = dockerImg.strip()
-        dockerSplit = dockerImg.split('name=')
-        dockerName = dockerSplit[1]
-        dockerName = dockerName[:-1]
-        # print(dockerName)
-        # obtains the docker image ID from the specified name
-        outID = subprocess.run(['docker', 'inspect', dockerName, '-f', '{{.ID}}'], stdout=subprocess.PIPE)
-        outID = outID.stdout.decode("utf-8")
-        outID = outID.strip()
-        # print("Test or something: " + outID)
-        line = outID.split(":")
-        if (dockerImg != '' and outID != ''):
-            # print(line[1])
-            parseDockerImages(line[1])  # parses the docker image based on its ID
+    # need to obtain the image name since the docker events command does not output the image ID on pull
+    dockerImg = std_outline
+    # print(dockerImg)
+    dockerImg = dockerImg.strip()
+    dockerSplit = dockerImg.split('name=')
+    dockerName = dockerSplit[1]
+    dockerName = dockerName[:-1]
+    # print(dockerName)
+    # obtains the docker image ID from the specified name
+    outID = subprocess.run(['docker', 'inspect', dockerName, '-f', '{{.ID}}'], stdout=subprocess.PIPE)
+    outID = outID.stdout.decode("utf-8")
+    outID = outID.strip()
+    # print("Test or something: " + outID)
+    line = outID.split(":")
+    if (dockerImg != '' and outID != ''):
+        # print(line[1])
+        parseDockerImages(line[1])  # parses the docker image based on its ID
 
 
 # start imageEvents and containerEvents and read lines and parse them accordingly
 def eventReader():
     processes = [subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, universal_newlines=True) for cmd in Commands]
-	for std_outline in iter(subprocess.PIPE.stdout.readline, ""):
-		if re.fullmatch(containerPat, std_outline):
-			print("container")
-			containerEvents(std_outline)
-		else:
-			print("image")
-			imageEvents(std_outline)
+    for std_outline in iter(subprocess.PIPE.stdout.readline, ""):
+        if re.fullmatch(containerPat, std_outline):
+            print("container")
+            containerEvents(std_outline)
+        else:
+            print("image")
+            imageEvents(std_outline)
 
 
 
