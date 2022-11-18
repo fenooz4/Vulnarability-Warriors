@@ -2,11 +2,13 @@ import sys
 import subprocess
 import os
 import threading
+import re
 
+containerPat = re.compile(r"^[a-z0-9]{64}")
 Images = []  # list to store all the image objects
 Containers = []  # list to store all the container objects
 Commands = ['docker events --filter type=container --filter event=start --format {{.ID}}',
-            'docker events --filter type=image --filter event=pull']
+            'docker events --filter type=image --filter "event=pull"']
 
 
 # obtains AWS instanceID, uncomment when uploading to AWS, cannot obtain when running locally
@@ -123,21 +125,14 @@ def obtainVals(i):
 
 # monitors container events (currently does not work if imageEvents is running)
 def containerEvents(std_outline):
-    popen = subprocess.Popen(
-        ['docker', 'events', '--filter', 'type=container', '--filter', 'event=start', '--format', '{{.ID}}'],
-        stdout=subprocess.PIPE, universal_newlines=True)
-    for std_outline in iter(popen.stdout.readline, ""):
-        dockerContainers = std_outline
-        dockerContainers = dockerContainers.strip()
-        print(dockerContainers)
-        parseDockerContainers(dockerContainers)
+    dockerContainers = std_outline
+    dockerContainers = dockerContainers.strip()
+    print(dockerContainers)
+    parseDockerContainers(dockerContainers)
 
 
 # monitors image events (currently terminates program when images are removed from system for some reason)
 def imageEvents(std_outline):
-    popen = subprocess.Popen(['docker', 'events', '--filter', 'type=image', '--filter', '"event=pull"'],
-                             stdout=subprocess.PIPE, universal_newlines=True)  # looks for docker image pull
-    for std_outline in iter(popen.stdout.readline, ""):
         # need to obtain the image name since the docker events command does not output the image ID on pull
         dockerImg = std_outline
         # print(dockerImg)
@@ -161,7 +156,12 @@ def imageEvents(std_outline):
 def eventReader():
     processes = [subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, universal_newlines=True) for cmd in Commands]
 	for std_outline in iter(subprocess.PIPE.stdout.readline, ""):
-        event = std_outline
+		if re.fullmatch(containerPat, std_outline):
+			print("container")
+			containerEvents(std_outline)
+		else:
+			print("image")
+			imageEvents(std_outline)
 
 
 
@@ -188,8 +188,10 @@ for container in dockerContainers:
 
 def main(_):
     # currently these cannot run simultaneously, need to figure out issue
-    imageEvents()
-    containerEvents()
+    #imageEvents()
+    #containerEvents()
+    eventReader()
+
 
 
 if __name__ == "__main__":
