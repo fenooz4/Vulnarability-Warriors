@@ -156,8 +156,18 @@ for container in dockerContainers:
 
 def main(_):
 	#currently these cannot run simultaneously, need to figure out issue
-	imageEvents()
-	containerEvents()
+	#Create separate threads for imageEvents and containerEvents so they can run in parallel
+	threads = [
+    		Thread(target = imageEvents),
+    		Thread(target = containerEvents)
+	]
+	#run threads
+	for thread in threads:
+   		thread.start()
+   		
+	#join threads 
+	for thread in threads:
+    		thread.join()
 
 	
 		
