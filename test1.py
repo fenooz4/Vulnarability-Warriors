@@ -3,6 +3,7 @@ import subprocess
 import os
 import threading
 import re
+import boto3
 
 containerPat = re.compile(r"^[a-z0-9]{64}")
 Images = []  # list to store all the image objects
@@ -163,6 +164,61 @@ def eventReader():
             print("image")
             imageEvents(std_outline)
     for p in processes: p.wait()
+    
+    
+    
+#dynamoDB Init
+tablename = "labels"
+pKey_name = "instanceID"
+pKey = 0
+columns = ["imageID","Label Types", "Label Names", "isDuplicate"]
+client = boto3.client('dynamodb')
+db = boto3.resource('dynamodb')
+table = db.Table(tablename)
+
+#create_table function with pkey instanceID and skey imageID
+def create_table():
+    table = client.create_table(
+		tablename = "labels",
+  		KeySchema=[
+	  		{
+		  		'AttributeName' : 'instanceID',
+				'KeyType': 'HASH'
+	  		},
+     		{
+				'AttributeName' : 'imageID',
+				'KeyType' : 'RANGE'
+	 		},
+    	],
+		AttributeDefinitions = [
+			{
+				'AttributeName' : 'instanceID',
+				'AttributeType' : 'S'
+			},
+			{
+				'AttributeName' : 'imageID',
+				'AttributeType' : 'S'
+			},
+		],
+		ProvisionedThroughput = {
+			'ReadCapacityUnits' : 5,
+			'WriteCapacityUnits' : 5
+		}
+	)    
+#can add more attributes here
+def dbupload(id,imgid,labeltypes,labelnames,isDuplicate):
+    response = client.put_item(
+        TableName='labels',
+        Item={
+            'instanceID':{
+                'S':"{}".format(id),
+            },
+            'imageID':{
+                'S':"{}".format(imgid),
+            },
+            
+        }
+    )
 
 
 # obtains a list of all running and previously ran docker container IDs and adds them to the dockerContainer list
