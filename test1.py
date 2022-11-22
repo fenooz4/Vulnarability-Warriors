@@ -216,7 +216,12 @@ def dbupload(id,imgid,labeltypes,labelnames,isDuplicate):
             'imageID':{
                 'S':"{}".format(imgid),
             },
-            
+            'mylabels':{
+                'SS': labelnames
+            },
+            'mytypes':{
+                'SS': labeltypes
+            }
         }
     )
 
