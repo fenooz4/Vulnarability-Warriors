@@ -142,9 +142,9 @@ def obtainVals(i):
     volumes = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.Volumes}}"', i.id], stdout = subprocess.PIPE)
     i.Volumes = volumes.stdout.decode("utf-8")
     workingDir = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.WorkingDir}}"', i.id], stdout = subprocess.PIPE)
-    i.WorkingDir = volumes.stdout.decode("utf-8")
+    i.WorkingDir = workingDir.stdout.decode("utf-8")
     entrypoint = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.Entrypoint}}"', i.id], stdout = subprocess.PIPE)
-    i.EntryPoint = volumes.stdout.decode("utf-8")
+    i.EntryPoint = entrypoint.stdout.decode("utf-8")
 
 
 # monitors container events (currently does not work if imageEvents is running)
