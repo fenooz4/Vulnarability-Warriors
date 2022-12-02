@@ -12,9 +12,13 @@ Commands = ['docker events --filter type=container --filter event=start --format
             'docker events --filter type=image --filter "event=pull"']
 
 
-# obtains AWS instanceID, uncomment when uploading to AWS, cannot obtain when running locally
+# obtains AWS instanceID, and IP addresses, uncomment when uploading to AWS, cannot obtain when running locally
 # out = subprocess.run(['ec2-metadata', '-i'], stdout = subprocess.PIPE) #get the labels for the current docker image
 # out = out.stdout.decode("utf-8")
+# localip = subprocess.run(['ec2-metadata', '--local-ipv4'])
+# localip = localip.stdout.decode("utf-8")
+# publicip = subprocess.run(['ec2-metadata', '--public-ipv4'])
+# publicip = publicip.stdout.decode("utf-8")
 # instance = out.split(':')
 # AWSinstanceID = instance[1]
 # print(AWSinstanceID)
@@ -23,10 +27,18 @@ Commands = ['docker events --filter type=container --filter event=start --format
 class DockerImage:
     id = ''
     imgId = ''
+    Name = ''
+	Env = ''
+	Cmd = ''
+	Volumes = ''
+	WorkingDir = ''
+    EntryPoint = ''
+    
 
     def __init__(i):
         i.labelTypes = []
         i.labelNames = []
+        i.labelErrors = []
 
     def addLabel(i, l, l2):
         i.labelTypes.append(l)
@@ -63,9 +75,8 @@ def labelCompare(c):
             while j < len(i.labelTypes):
                 while k < len(c.labelTypes):
                     if i.labelTypes[j] == c.labelTypes[k]:
-                        if i.labelNames[j] == c.labelNames[k]:
-                            print(i.labelNames[j] + ", " + c.labelNames[
-                                k])  # outputs the label names of the image and the container if they match
+                        if i.labelNames[j] != c.labelNames[k]:
+                             i.labelErrors.append(i.labelTypes[j])#appends label type error to the image's label errors
 
                     k += 1
                 j += 1
@@ -89,17 +100,20 @@ def obtainLabels(c):
 
 
 # parses docker image information
-def parseDockerImages(img):
+def parseDockerImages(img, name):
     img = img.strip()
     i = DockerImage()  # creates new docker image object
     i.id = img  # sets id for the image object to the img id
+    i.Name = name #sets name for the image object to the img name
     outID = subprocess.run(['docker', 'inspect', '-f', '{{.ID}}', img], stdout=subprocess.PIPE)
     outID = outID.stdout.decode("utf-8")
     outID = outID.strip()
     line = outID.split(":")
     i.imgID = line[1]
     obtainLabels(i)  # obtains the labels for the image
+    obtainVals(i)  #obtains various extraneous docker image information and applies 
     Images.append(i)  # adds docker image object to the docker image list
+
 
 
 # parses docker container information
@@ -120,15 +134,24 @@ def parseDockerContainers(container):
 
 
 def obtainVals(i):
-    # used to obtain various values for images
-    print(i)
+    # used to obtain various extraneous values for docker images
+    env = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.Env}}"', i.id], stdout = subprocess.PIPE)
+	i.Env = env.stdout.decode("utf-8")
+	cmd = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.Cmd}}"', i.id], stdout = subprocess.PIPE)
+	i.Cmd = cmd.stdout.decode("utf-8")
+	volumes = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.Volumes}}"', i.id], stdout = subprocess.PIPE)
+	i.Volumes = volumes.stdout.decode("utf-8")
+	workingDir = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.WorkingDir}}"', i.id], stdout = subprocess.PIPE)
+	i.WorkingDir = volumes.stdout.decode("utf-8")
+	entrypoint = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.Entrypoint}}"', i.id], stdout = subprocess.PIPE)
+	i.EntryPoint = volumes.stdout.decode("utf-8")
 
 
 # monitors container events (currently does not work if imageEvents is running)
 def containerEvents(std_outline):
     dockerContainers = std_outline
     dockerContainers = dockerContainers.strip()
-    print(dockerContainers)
+    #print(dockerContainers)
     parseDockerContainers(dockerContainers)
 
 
@@ -150,7 +173,7 @@ def imageEvents(std_outline):
     line = outID.split(":")
     if (dockerImg != '' and outID != ''):
         # print(line[1])
-        parseDockerImages(line[1])  # parses the docker image based on its ID
+        parseDockerImages(line[1], dockerName)  # parses the docker image based on its ID
 
 
 # start imageEvents and containerEvents and read lines and parse them accordingly
@@ -158,10 +181,10 @@ def eventReader():
     processes = [subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, universal_newlines=True) for cmd in Commands]
     for std_outline in iter(processes[0].stdout.readline, ""):
         if re.match(containerPat, std_outline):
-            print("container")
+            #print("container")
             containerEvents(std_outline)
         else:
-            print("image")
+            #print("image")
             imageEvents(std_outline)
     for p in processes: p.wait()
     
@@ -233,7 +256,7 @@ out = out.stdout.decode("utf-8")  # decodes output
 dockerContainers = out.splitlines()  # store the output in a list
 
 # obtains a list of docker image IDs and adds them to the dockerImage list
-out = subprocess.run(['docker', 'images', 'ls', '-a', '-q', '--no-trunc'],
+out = subprocess.run(['docker', 'images', 'ls', '-q'],
                      stdout=subprocess.PIPE)  # runs command line prompt
 out = out.stdout.decode("utf-8")  # decodes output
 dockerImgs = out.splitlines()  # store the output in a list
