@@ -1,0 +1,11 @@
+  {
+    "tasktype": "create",
+    "data": {
+      "id": "testinsanceid",
+      "imageid": "testimageid",
+      "labels": {
+        "labeltype1": "labelname1",
+        "labeltype2": "labelname2"
+      }
+    }
+  }
