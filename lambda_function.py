@@ -48,13 +48,13 @@ class DBupload:
 def lambda_handler(event, context):
     if event:
         instance =  DBupload()
-        if event['tasktype']  == "create":
+        if 'tasktype' in event and event['tasktype']  == "create":
             create_result =  instance.Create_data(event['data'])
             return create_result
-        elif event['tasktype']  == "read":
+        elif 'tasktype' in event and event['tasktype']  == "read":
             read_result =  instance.Read_data(event['data'])
             return read_result
-        elif event['tasktype']  == "delete":
+        elif 'tasktype' in event and event['tasktype']  == "delete":
             delete_result =  instance.Delete_data(event['data'])
             return delete_result
         else :
