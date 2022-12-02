@@ -1,5 +1,5 @@
 FROM python:3
 
-ADD test.py / 
+ADD test1.py / 
 
-CMD [ "python", "./test.py" ]
+CMD [ "python", "./test1.py" ]
