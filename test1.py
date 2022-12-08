@@ -4,13 +4,15 @@ import os
 import threading
 import re
 import boto3
+import requests
 
 containerPat = re.compile(r"^[a-z0-9]{64}")
 Images = []  # list to store all the image objects
 Containers = []  # list to store all the container objects
 Commands = ['docker events --filter type=container --filter event=start --format {{.ID}}',
             'docker events --filter type=image --filter "event=pull"']
-
+APIEndpoint = 'REPLACETHIS'                         # REPLACE WITH APIENDPOINT URL
+APIKEY = {'x-api-key' : 'REPLACETHIS'}              # REPLACE WITH API KEY
 
 # obtains AWS instanceID, and IP addresses, uncomment when uploading to AWS, cannot obtain when running locally
 # out = subprocess.run(['ec2-metadata', '-i'], stdout = subprocess.PIPE) #get the labels for the current docker image
@@ -80,6 +82,9 @@ def labelCompare(c):
 
                     k += 1
                 j += 1
+        imagedata = json.dumps(i)
+        postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagedata)
+        print(postrequest.text)
 
 
 # function used to obtain labels from containers and images
@@ -188,66 +193,6 @@ def eventReader():
             imageEvents(std_outline)
     for p in processes: p.wait()
     
-    
-    
-#dynamoDB Init
-tablename = "labels"
-pKey_name = "instanceID"
-pKey = 0
-columns = ["imageID","Label Types", "Label Names", "isDuplicate"]
-client = boto3.client('dynamodb')
-db = boto3.resource('dynamodb')
-table = db.Table(tablename)
-
-#create_table function with pkey instanceID and skey imageID
-def create_table():
-    table = client.create_table(
-		tablename = "labels",
-  		KeySchema=[
-	  		{
-		  		'AttributeName' : 'instanceID',
-				'KeyType': 'HASH'
-	  		},
-     		{
-				'AttributeName' : 'imageID',
-				'KeyType' : 'RANGE'
-	 		},
-    	],
-		AttributeDefinitions = [
-			{
-				'AttributeName' : 'instanceID',
-				'AttributeType' : 'S'
-			},
-			{
-				'AttributeName' : 'imageID',
-				'AttributeType' : 'S'
-			},
-		],
-		ProvisionedThroughput = {
-			'ReadCapacityUnits' : 5,
-			'WriteCapacityUnits' : 5
-		}
-	)    
-#can add more attributes here
-def dbupload(id,imgid,labeltypes,labelnames,isDuplicate):
-    response = client.put_item(
-        TableName='labels',
-        Item={
-            'instanceID':{
-                'S':"{}".format(id),
-            },
-            'imageID':{
-                'S':"{}".format(imgid),
-            },
-            'mylabels':{
-                'SS': labelnames
-            },
-            'mytypes':{
-                'SS': labeltypes
-            }
-        }
-    )
-
 
 # obtains a list of all running and previously ran docker container IDs and adds them to the dockerContainer list
 out = subprocess.run(['docker', 'container', 'ls', '-a', '-q', '--no-trunc'],
