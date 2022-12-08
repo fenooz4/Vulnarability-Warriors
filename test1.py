@@ -95,7 +95,7 @@ def labelCompare(c):
         imagedata['WorkingDir'] = i.WorkingDir
         imagedata['EntryPoint'] = i.EntryPoint
         imagebody['body']['data'] = imagedata
-        imagejson = json.dumps(imagebody)
+        imagejson = json.loads(json.dumps(imagebody))
         print(imagejson)
         postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagejson)
 
