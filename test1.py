@@ -94,8 +94,8 @@ def labelCompare(c):
         imagedata['WorkingDir'] = i.WorkingDir
         imagedata['EntryPoint'] = i.EntryPoint
         imagejson = json.dumps(imagedata)
-        print(imagedata)
-        postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagedata)
+        print(imagejson)
+        postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagejson)
 
 
 # function used to obtain labels from containers and images
