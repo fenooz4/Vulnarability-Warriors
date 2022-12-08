@@ -25,7 +25,6 @@ APIKEY = {'x-api-key' : '9L4NLcZOLMh8nI5ESocc5V7rTa0jnv23KcaOlEHa'}             
 # instance = out.split(':')
 # AWSinstanceID = instance[1]
 # print(AWSinstanceID)
-tasktype = {'tasktype': 'create'}
 
 # DockerImage object that stores the information for docker images
 class DockerImage:
@@ -84,9 +83,16 @@ def labelCompare(c):
 
                     k += 1
                 j += 1
-        imagedata = json.dumps(i)
+        imagedata = {}
         imagedata['tasktype'] = 'create'
-        print(imagedata)
+        imagedata['id'] = i.id
+        imagedata['imgID'] = i.imgID
+        imagedata['Name'] = i.Name
+        imagedata['Env'] = i.env
+        imagedata['Cmd'] = i.Cmd
+        imagedata['Volumes'] = i.Volumes
+        imagedata['WorkingDir'] = i.workingDir
+        imagedata['EntryPoint'] = i.entryPoint
         postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagedata)
 
 
