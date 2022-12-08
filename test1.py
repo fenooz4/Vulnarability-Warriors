@@ -83,6 +83,7 @@ def labelCompare(c):
                     k += 1
                 j += 1
         imagedata = json.dumps(i)
+        print(imagedata)
         postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagedata)
 
 
