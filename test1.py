@@ -154,15 +154,15 @@ def parseDockerContainers(container):
 def obtainVals(i):
     # used to obtain various extraneous values for docker images
     env = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.Env}}"', i.id], stdout = subprocess.PIPE)
-    i.Env = env.stdout.decode("utf-8")
+    i.Env = env.stdout.decode("utf-8").strip()
     cmd = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.Cmd}}"', i.id], stdout = subprocess.PIPE)
-    i.Cmd = cmd.stdout.decode("utf-8")
+    i.Cmd = cmd.stdout.decode("utf-8").strip()
     volumes = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.Volumes}}"', i.id], stdout = subprocess.PIPE)
-    i.Volumes = volumes.stdout.decode("utf-8")
+    i.Volumes = volumes.stdout.decode("utf-8").strip()
     workingDir = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.WorkingDir}}"', i.id], stdout = subprocess.PIPE)
-    i.WorkingDir = workingDir.stdout.decode("utf-8")
+    i.WorkingDir = workingDir.stdout.decode("utf-8").strip()
     entrypoint = subprocess.run(['docker', 'inspect', '-f', '"{{json .Config.Entrypoint}}"', i.id], stdout = subprocess.PIPE)
-    i.EntryPoint = entrypoint.stdout.decode("utf-8")
+    i.EntryPoint = entrypoint.stdout.decode("utf-8").strip()
 
 
 # monitors container events (currently does not work if imageEvents is running)
