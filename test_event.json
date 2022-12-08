@@ -1,11 +1,27 @@
-  {
-    "tasktype": "create",
-    "data": {
-      "id": "testinsanceid",
-      "imageid": "testimageid",
-      "labels": {
-        "labeltype1": "labelname1",
-        "labeltype2": "labelname2"
-      }
+{
+    "tasktype":"create",
+    "data":{
+       "id":"testinsanceid",
+       "imageid":"testimageid",
+       "labels":{
+          "labeltype1":"labelname1",
+          "labeltype2":"labelname2"
+       }
     }
-  }
+ }
+
+ {
+   "body":{
+      "tasktype":"create",
+      "data":{
+         "id":"88736fe82739",
+         "imgID":"88736fe827391462a4db99252117f136b2b25d1d31719006326a437bb40cb12d",
+         "Name":"",
+         "Env":"\"[\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",\"NGINX_VERSION=1.23.2\",\"NJS_VERSION=0.7.7\",\"PKG_RELEASE=1~bullseye\"]\"",
+         "Cmd":"\"[\"nginx\",\"-g\",\"daemon off;\"]\"",
+         "Volumes":"\"null\"",
+         "WorkingDir":"\"\"\"\"",
+         "EntryPoint":"\"[\"/docker-entrypoint.sh\"]\""
+      }
+   }
+}
