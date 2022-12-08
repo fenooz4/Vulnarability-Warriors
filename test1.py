@@ -178,7 +178,7 @@ def imageEvents(std_outline):
     line = outID.split(":")
     if (dockerImg != '' and outID != ''):
         # print(line[1])
-        parseDockerImages(line[1], dockerName)  # parses the docker image based on its ID
+        parseDockerImages(line[1])  # parses the docker image based on its ID
 
 
 # start imageEvents and containerEvents and read lines and parse them accordingly
