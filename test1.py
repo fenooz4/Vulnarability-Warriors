@@ -85,7 +85,6 @@ def labelCompare(c):
                 j += 1
         imagedata = {}
         imagebody = {}
-        labels = {}
         imagebody['tasktype'] = 'create'
         imagedata['id'] = i.id
         imagedata['imgID'] = i.imgID
@@ -95,8 +94,10 @@ def labelCompare(c):
         imagedata['Volumes'] = i.Volumes
         imagedata['WorkingDir'] = i.WorkingDir
         imagedata['EntryPoint'] = i.EntryPoint
-        
         imagebody['data'] = imagedata
+        labels = {t: n for t, n in zip(i.labelTypes,i.labelNames)}
+        imagebody['labels'] = labels
+        imagebody['labelErrors'] = i.labelErrors
         imagejson = json.loads(json.dumps(imagebody))
         postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagejson)
         print(postrequest)
