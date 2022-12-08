@@ -5,6 +5,7 @@ import threading
 import re
 import boto3
 import requests
+import json
 
 containerPat = re.compile(r"^[a-z0-9]{64}")
 Images = []  # list to store all the image objects
@@ -24,6 +25,7 @@ APIKEY = {'x-api-key' : '9L4NLcZOLMh8nI5ESocc5V7rTa0jnv23KcaOlEHa'}             
 # instance = out.split(':')
 # AWSinstanceID = instance[1]
 # print(AWSinstanceID)
+tasktype = {'tasktype': 'create'}
 
 # DockerImage object that stores the information for docker images
 class DockerImage:
@@ -83,6 +85,7 @@ def labelCompare(c):
                     k += 1
                 j += 1
         imagedata = json.dumps(i)
+        imagedata['tasktype'] = 'create'
         print(imagedata)
         postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagedata)
 
