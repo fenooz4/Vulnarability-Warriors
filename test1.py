@@ -84,7 +84,7 @@ def labelCompare(c):
                     k += 1
                 j += 1
         imagedata = {}
-        imagebody = {}
+        imagebody = {'body':{}}
         imagebody['tasktype'] = 'create'
         imagedata['id'] = i.id
         imagedata['imgID'] = i.imgID
