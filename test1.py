@@ -105,7 +105,7 @@ def obtainLabels(c):
 
 
 # parses docker image information
-def parseDockerImages(img, name):
+def parseDockerImages(img):
     img = img.strip()
     i = DockerImage()  # creates new docker image object
     i.id = img  # sets id for the image object to the img id
