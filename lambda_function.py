@@ -19,31 +19,6 @@ class DBupload:
             'statusCode' : response['ResponseMetadata']['HTTPStatusCode'],
             'body' : 'Record ' + event['id'] + ' added'
         }
-         
-    def  Read_data(self , event):
-        response = self.table.get_item(
-            Key={
-                'instanceID': event['id']
-            }
-        )
-        if 'Item' in response:
-            return response['Item']
-        else:
-            return {
-                'statusCode': '404',
-                'body': 'Not found'
-            }     
-            
-    def  Delete_data(self , event):
-        response = self.table.delete_item(
-            Key={
-                'instanceID': event['id']
-            }
-        )
-        return {
-                'statusCode': '200',
-                'body': 'Deleted the item with id :' + event['id']
-            }
 
 def lambda_handler(event, context):
     if event:
