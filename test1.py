@@ -88,11 +88,11 @@ def labelCompare(c):
         imagedata['id'] = i.id
         imagedata['imgID'] = i.imgID
         imagedata['Name'] = i.Name
-        imagedata['Env'] = i.env
+        imagedata['Env'] = i.Env
         imagedata['Cmd'] = i.Cmd
         imagedata['Volumes'] = i.Volumes
-        imagedata['WorkingDir'] = i.workingDir
-        imagedata['EntryPoint'] = i.entryPoint
+        imagedata['WorkingDir'] = i.WorkingDir
+        imagedata['EntryPoint'] = i.EntryPoint
         postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagedata)
 
 
