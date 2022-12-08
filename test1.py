@@ -104,11 +104,11 @@ def obtainLabels(c):
 
 
 # parses docker image information
-def parseDockerImages(img, name):
+def parseDockerImages(img):
     img = img.strip()
     i = DockerImage()  # creates new docker image object
     i.id = img  # sets id for the image object to the img id
-    i.Name = name #sets name for the image object to the img name
+    #i.Name = name #sets name for the image object to the img name
     outID = subprocess.run(['docker', 'inspect', '-f', '{{.ID}}', img], stdout=subprocess.PIPE)
     outID = outID.stdout.decode("utf-8")
     outID = outID.strip()
@@ -177,7 +177,7 @@ def imageEvents(std_outline):
     line = outID.split(":")
     if (dockerImg != '' and outID != ''):
         # print(line[1])
-        parseDockerImages(line[1], dockerName)  # parses the docker image based on its ID
+        parseDockerImages(line[1])  # parses the docker image based on its ID
 
 
 # start imageEvents and containerEvents and read lines and parse them accordingly
@@ -200,7 +200,7 @@ out = out.stdout.decode("utf-8")  # decodes output
 dockerContainers = out.splitlines()  # store the output in a list
 
 # obtains a list of docker image IDs and adds them to the dockerImage list
-out = subprocess.run(['docker', 'images', 'ls', '-q'],
+out = subprocess.run(['docker', 'images', '-q'],
                      stdout=subprocess.PIPE)  # runs command line prompt
 out = out.stdout.decode("utf-8")  # decodes output
 dockerImgs = out.splitlines()  # store the output in a list
