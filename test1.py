@@ -98,6 +98,7 @@ def labelCompare(c):
         imagejson = json.loads(json.dumps(imagebody))
         print(imagejson)
         postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagejson)
+        print(postrequest)
 
 
 # function used to obtain labels from containers and images
