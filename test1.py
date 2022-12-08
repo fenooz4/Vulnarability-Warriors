@@ -79,7 +79,8 @@ def labelCompare(c):
                 while k < len(c.labelTypes):
                     if i.labelTypes[j] == c.labelTypes[k]:
                         if i.labelNames[j] != c.labelNames[k]:
-                             i.labelErrors.append(i.labelTypes[j])#appends label type error to the image's label errors
+                                    if i.labelTypes[j] not in i.labelErrors:
+                                                i.labelErrors.append(i.labelTypes[j])#appends label type error to the image's label errors
 
                     k += 1
                 j += 1
