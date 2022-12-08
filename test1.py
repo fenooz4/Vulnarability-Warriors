@@ -15,9 +15,9 @@ Commands = ['docker events --filter type=container --filter event=start --format
 # obtains AWS instanceID, and IP addresses, uncomment when uploading to AWS, cannot obtain when running locally
 # out = subprocess.run(['ec2-metadata', '-i'], stdout = subprocess.PIPE) #get the labels for the current docker image
 # out = out.stdout.decode("utf-8")
-# localip = subprocess.run(['ec2-metadata', '--local-ipv4'])
+# localip = subprocess.run(['ec2-metadata', '--local-ipv4'], stdout = subprocess.PIPE)
 # localip = localip.stdout.decode("utf-8")
-# publicip = subprocess.run(['ec2-metadata', '--public-ipv4'])
+# publicip = subprocess.run(['ec2-metadata', '--public-ipv4'], stdout = subprocess.PIPE)
 # publicip = publicip.stdout.decode("utf-8")
 # instance = out.split(':')
 # AWSinstanceID = instance[1]
