@@ -12,8 +12,8 @@ Images = []  # list to store all the image objects
 Containers = []  # list to store all the container objects
 Commands = ['docker events --filter type=container --filter event=start --format {{.ID}}',
             'docker events --filter type=image --filter "event=pull"']
-APIEndpoint = 'https://wo1kim4ak9.execute-api.us-east-1.amazonaws.com/prod/dbuploader'                         # REPLACE WITH APIENDPOINT URL
-APIKEY = {'x-api-key' : '9L4NLcZOLMh8nI5ESocc5V7rTa0jnv23KcaOlEHa'}              # REPLACE WITH API KEY
+APIEndpoint = 'REPLACE THIS'                         # REPLACE WITH APIENDPOINT URL
+APIKEY = {'x-api-key' : 'REPLACE THIS'}              # REPLACE WITH API KEY
 
 # obtains AWS instanceID, and IP addresses, uncomment when uploading to AWS, cannot obtain when running locally
 # out = subprocess.run(['ec2-metadata', '-i'], stdout = subprocess.PIPE) #get the labels for the current docker image
@@ -105,7 +105,6 @@ def labelCompare(c):
         
         imagebody['data'] = imagedata
         imagejson = json.loads(json.dumps(imagebody))
-        print(imagejson)
         postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagejson)
         print(postrequest)
 
