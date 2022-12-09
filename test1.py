@@ -68,6 +68,7 @@ class DockerContainer:
 
 
 # function used to compare labels of a container to labels of an image
+# function used to compare labels of a container to labels of an image
 def labelCompare(c):
     for i in Images:  # for every image
         if c.imgID == i.imgID:  # compare container's imageID to the imageID to find a match
@@ -84,8 +85,10 @@ def labelCompare(c):
 
                     k += 1
                 j += 1
+                
         imagedata = {}
         imagebody = {}
+        
         imagebody['tasktype'] = 'create'
         imagedata['id'] = i.id
         imagedata['imgID'] = i.imgID
@@ -95,11 +98,14 @@ def labelCompare(c):
         imagedata['Volumes'] = i.Volumes
         imagedata['WorkingDir'] = i.WorkingDir
         imagedata['EntryPoint'] = i.EntryPoint
-        imagebody['data'] = imagedata
+        
         labels = {t: n for t, n in zip(i.labelTypes,i.labelNames)}
-        imagebody['labels'] = labels
-        imagebody['labelErrors'] = i.labelErrors
+        imagedata['labels'] = labels
+        imagedata['labelErrors'] = i.labelErrors
+        
+        imagebody['data'] = imagedata
         imagejson = json.loads(json.dumps(imagebody))
+        print(imagejson)
         postrequest = requests.post(APIEndpoint, headers=APIKEY, json=imagejson)
         print(postrequest)
 
