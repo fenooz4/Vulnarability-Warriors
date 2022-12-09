@@ -135,6 +135,8 @@ def parseDockerImages(img):
     outID = subprocess.run(['docker', 'inspect', '-f', '{{.ID}}', img], stdout=subprocess.PIPE)
     outID = outID.stdout.decode("utf-8")
     outID = outID.strip()
+    name = subprocess.run(['docker', 'inspect', '-f', '{{.RepoTags}}', img], stdout=subprocess.PIPE)
+    i.Name = name.stdout.decode("utf-8").strip()
     line = outID.split(":")
     i.imgID = line[1]
     obtainLabels(i)  # obtains the labels for the image
