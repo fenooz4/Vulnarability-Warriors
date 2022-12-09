@@ -17,8 +17,8 @@ class DBupload:
                 'Cmd' : event['Cmd'],
                 'Volumes': event['Volumes'],
                 'WorkingDir' : event['WorkingDir'],
-                'EntryPoint' : event['EntryPoint']
-                'labels': event['labels']
+                'EntryPoint' : event['EntryPoint'],
+                'labels': event['labels'],
                 'labelErrors': event['labelErrors']
             }
         )
